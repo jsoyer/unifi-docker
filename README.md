@@ -1,4 +1,6 @@
-# Unifi-in-Docker (unifi-docker)
+# Unifi-in-Docker (unifi-docker) 🐳
+
+This is a fork of [jacobalberty/unifi-docker](https://github.com/jacobalberty/unifi-docker). Huge thanks to **Jacob Alberty** for his amazing work on this project! 🙌
 
 This repo contains a Dockerized version of [Ubiqiti Network's](https://www.ubnt.com/) Unifi Controller.
 
@@ -17,7 +19,7 @@ and even Raspberry Pi hardware.
 **Latest Version:** The latest version is shown in the first line
 of the [Current Information](#current-information) table on this page.
 
-## Setting up, Running, Stopping, Upgrading
+## ⚙️ Setting up, Running, Stopping, Upgrading
 
 First, install Docker on the "Docker host" -
 the machine that will run the Docker
@@ -28,7 +30,7 @@ For Windows, see the [Microsoft guide for installing Docker.](https://docs.micro
 Then use the following steps to set up the directories
 and start the Docker container running.
 
-### Setting up directories
+### 📁 Setting up directories
 
 _One-time setup:_ create the `unifi` directory on the Docker host.
 Within that directory, create two sub-directories: `data` and `log`.
@@ -45,7 +47,7 @@ If you create the directory elsewhere, read the
 [Options section](#options-on-the-command-line)
 below to adjust.)
 
-### Running Unifi-in-Docker
+### 🚀 Running Unifi-in-Docker
 
 Each time you want to start Unifi, use this command.
 Each of the options is [described below.](#options-on-the-command-line)
@@ -75,7 +77,7 @@ Docker host correctly, agree to the connection.
 * See the note below about **Override "Inform Host" IP** so your
 Unifi devices can "find" the Unifi Controller.
  
-### Stopping Unifi-in-Docker
+### ⏹️ Stopping Unifi-in-Docker
 
 To change options, stop the Docker container then re-run the `docker run...` command
 above with the new options.
@@ -86,7 +88,7 @@ No time-consuming rebuild is required.
 docker stop unifi
 docker rm unifi
 ```
-### Upgrading Unifi Controller
+### ⬆️ Upgrading Unifi Controller
 
 All the configuration and other files created by Unifi Controller
 are stored on the Docker host's local disk (`~/unifi` by default.)
@@ -99,7 +101,7 @@ The upgrade process is:
 2. Stop the current container (see above)
 3. Enter `docker run...` with the newer container tag (see [Current Information](#current-information) section below.)
 
-## Options on the Command Line
+## 📋 Options on the Command Line
 
 The options for the `docker run...` command are:
 
@@ -127,7 +129,7 @@ See the [Volumes](#volumes) discussion for other volumes used by Unifi Controlle
 The `jsoyer...` image is retrieved from [Dockerhub.](https://hub.docker.com/r/jsoyer/unifi)
 The [Current Information](#current-information) section below discusses the versions/tags that are available.
 
-## Current Information
+## ℹ️ Current Information
 
 The current tested version of unifi-docker is listed in the table below. 
 You can choose the version of Unifi Controller in the `docker run ...` command.
@@ -154,14 +156,14 @@ For Unifi-in-Docker, this uses the most recent stable version.
 | [`stable-6`](https://github.com/jsoyer/unifi-docker/blob/stable-6/Dockerfile)         | Final stable version 6 (6.5.55)                   | [Change Log 6.5.55](https://community.ui.com/releases/UniFi-Network-Application-6-5-55/48c64137-4a4a-41f7-b7e4-3bee505ae16e)     |
 | [`stable-5`](https://github.com/jsoyer/unifi-docker/blob/stable-5/Dockerfile)         | Final stable version 5 (5.4.23)                   | [Change Log 5.14.23](https://community.ui.com/releases/UniFi-Network-Controller-5-14-23/daf90732-30ad-48ee-81e7-1dcb374eba2a)    |
 
-### multiarch
+### 🖥️ multiarch
 
 All available containers now support multiarch with `amd64`, `armhf`, and `arm64` builds included.
 `armhf` for now uses mongodb 3.4, I do not see much of a path forward for `armhf` due
 to the lack of mongodb support for 32 bit arm, but I will
 support it as long as feasibly possible, for now that date seems to be expiration of support for ubuntu 18.04.
 
-## Adopting Access Points and Unifi Devices
+## 🔌 Adopting Access Points and Unifi Devices
 
 For your Unifi devices to "find" the Unifi Controller running in Docker, you _MUST_ override the
 Inform Host IP with the address of the Docker host computer.
@@ -170,12 +172,12 @@ while Unifi devices connect to the (external) address of the Docker host.)
 
 There are a few ways to do this:
 
-### By setting `SYSTEM_IP` environment variable
+### 🔧 By setting `SYSTEM_IP` environment variable
 Set `SYSTEM_IP` environment variable on the container to the IP devices may use
 to reach the controller, eg. your local address. This IP will be used as inform
 host during adopting process and used for following communication.
 
-### By overriding Inform Host on device level
+### 🔧 By overriding Inform Host on device level
 
 * Find **UniFi Devices -> Device Updates and Settings -> Device Settings -> Inform Host Override** in the UniFi Controller web GUI (it's in the middle of that page).
 * Check the "Enable" box, and enter the IP address of the Docker host machine. 
@@ -190,7 +192,7 @@ See [Side Projects](https://github.com/jsoyer/unifi-docker/blob/master/Side-Proj
 other techniques to get Unifi devices to adopt your
 new Unifi Controller.
 
-## Volumes
+## 💾 Volumes
 
 Unifi looks for the `/unifi` directory (within the container)
 for its special purpose subdirectories:
@@ -210,7 +212,7 @@ You can place scripts you want to launch every time the container starts in here
 Run information, in general you will not need to touch this volume.
 It is there to ensure UniFi has a place to write its PID files
 
-### Legacy Volumes
+### 📦 Legacy Volumes
 
 These are no longer actually volumes, rather they exist for legacy compatibility.
 You are urged to move to the new volumes ASAP.
@@ -218,7 +220,7 @@ You are urged to move to the new volumes ASAP.
 * `/var/lib/unifi` New name: `/unifi/data`
 * `/var/log/unifi` New name: `/unifi/log`
 
-## Environment Variables:
+## 🌍 Environment Variables:
 
 You can pass in environment variables using the `-e` option when you invoke `docker run...`
 See the `TZ` in the example above.
@@ -295,7 +297,7 @@ Java Virtual Machine (JVM) allocates available memory.
 For larger installations a larger value is recommended. For memory constrained system this value can be lowered. 
 **Default: 1024M** 
 
-## Exposed Ports
+## 🔌 Exposed Ports
 
 The Unifi-in-Docker container exposes the following ports.
 A minimal Unifi Controller installation requires you
@@ -311,7 +313,7 @@ expose the first four with the `-p ...` option.
 
 See [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used) for more information.
 
-## Run as non-root User
+## 👤 Run as non-root User
 
 The default container runs Unifi Controller as root.
 The recommended `docker run...` command above starts
@@ -327,7 +329,7 @@ If you must do this, also pass the
 `--sysctl net.ipv4.ip_unprivileged_port_start=0`
 option on the `docker run...` to bind to whatever port you wish.
 
-## Certificate Support
+## 🔒 Certificate Support
 
 To use custom SSL certs, you must map a volume with the certs to `/unifi/cert`
 
@@ -343,7 +345,7 @@ If your certificate or private key have different names, you can set the environ
 
 For letsencrypt certs, we'll autodetect that and add the needed Identrust X3 CA Cert automatically. In case your letsencrypt cert is already the chained certificate, you can set the `CERT_IS_CHAIN` environment variable to `true`, e.g. `CERT_IS_CHAIN=true`. This option also works together with a custom `CERTNAME`.
 
-### Certificates Using Elliptic Curve Algorithms
+### 🔐 Certificates Using Elliptic Curve Algorithms
 
 If your certs use elliptic curve algorithms, which currently seems to be the default with letsencrypt certs, you might additionally have to set the `UNIFI_ECC_CERT` environment variable to `true`, otherwise clients will fail to establish a secure connection. For example an attempt with `curl` will show:
 
@@ -361,12 +363,12 @@ You can check your certificate for this with the following command:
 
 If the output contains `id-ec` as shown in the example, then your certificate might be affected.
 
-## Additional Information
+## ℹ️ Additional Information
 
 This document describes everything you need to get Unifi-in-Docker running.
 The [Side Projects and Background Info](https://github.com/jsoyer/unifi-docker/blob/master/Side-Projects.md) page
 provides more about what we've learned while developing Unifi-in-Docker.
 
-## TODO
+## 📝 TODO
 
 This list is empty for now, please [add your suggestions](https://github.com/jsoyer/unifi-docker/issues).
