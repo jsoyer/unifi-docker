@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Rotate /unifi/log/*.log daily in the background.
+# State file is stored in the volume so it persists across container restarts,
+# preventing double-rotation after a restart.
+(
+    while true; do
+        sleep 86400
+        logrotate --state /unifi/log/.logrotate.state /etc/logrotate.d/unifi
+    done
+) &

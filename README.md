@@ -397,7 +397,7 @@ provides more about what we've learned while developing Unifi-in-Docker.
 
 - ~~**Sign released images with cosign**~~ ✅ — Keyless cosign signing added to the publish workflow. The image digest is signed via Sigstore/Fulcio on every push to `main`.
 
-- **Add log rotation for `/unifi/log/`** — Docker stdout logs are now capped (10 MB / 3 files via `json-file` driver). The UniFi application log files inside the volume (`/unifi/log/server.log`) are still not rotated and can grow unbounded on long-running installs. A `logrotate` config or init.d script is still needed.
+- ~~**Add log rotation for `/unifi/log/`**~~ ✅ — `logrotate` (already a UniFi package dependency) now runs daily via an init.d script. Config: daily rotation, 7-day retention, compressed with `copytruncate` (safe for Java open file descriptors). State file persisted in the volume at `/unifi/log/.logrotate.state` to survive container restarts.
 
 ### Low priority
 
