@@ -383,6 +383,7 @@ provides more about what we've learned while developing Unifi-in-Docker.
   - ✅ **UniFi 10.1.85 officially supports MongoDB 7.0** — the `.deb` package declares `mongodb-org-server (>= 3.6.0, < 8.1.0)`, so 7.0 is within the supported range.
   - ✅ **aarch64 (arm64/v8) confirmed** — `mongo:7.0` ships an official `linux/arm64/v8` image. Covers Pi 4 and Pi 5 running a 64-bit OS.
   - ❌ **armhf (32-bit ARM) is a blocker** — MongoDB dropped official armhf support after 3.x. Pi 4 users running a 32-bit OS are affected. Options: find a community build for MongoDB 7.0 on armhf, or officially drop armhf support and document it.
+  - ⚠️ **Incremental upgrade required** — MongoDB does not support jumping directly from 3.6 to 7.0. The upgrade path must go through each major version: 3.6 → 4.0 → 4.2 → 4.4 → 5.0 → 6.0 → 7.0, with `setFeatureCompatibilityVersion` run at each step before moving to the next. A migration guide and/or helper script will be needed.
 
 ### Medium priority
 
@@ -391,6 +392,12 @@ provides more about what we've learned while developing Unifi-in-Docker.
 - **Add image vulnerability scanning (Trivy)** — Integrate automated CVE scanning on each build to catch vulnerabilities in base image packages.
 
 - **Replace deprecated `apt-key adv` with signed keyring** — The Ubiquiti repo key is added via the deprecated `apt-key adv` method. Migrate to `/etc/apt/trusted.gpg.d/ubiquiti.gpg` (consistent with how the Adoptium key is already handled).
+
+- **Automate UniFi version updates with Renovate** — The `PKGURL` in the Dockerfile is hardcoded to a specific UniFi version. Renovate (or a GitHub Actions workflow) could detect new UniFi releases and open a PR automatically, keeping the image up to date without manual intervention.
+
+- **Sign released images with cosign** — Adding Sigstore/cosign signatures to published images would allow users to verify image integrity and origin, improving supply chain security.
+
+- **Add log rotation configuration** — UniFi logs written to `/unifi/log/` are not rotated by default. On long-running installs, `server.log` can grow to several GB. A `logrotate` config or a documented volume size limit would prevent disk exhaustion.
 
 
 ### Low priority
@@ -404,5 +411,9 @@ provides more about what we've learned while developing Unifi-in-Docker.
 - **Improve healthcheck to use UniFi API** — The current healthcheck only verifies TCP connectivity on port 8443. Querying `/status` from the UniFi API would provide a true application-level health signal.
 
 - **Document `./backup` directory permissions in README** — The host-side `./backup` bind mount must be owned by `999:999` (unifi). Docker creates it as root if it does not exist, silently breaking backup import. Worth calling out explicitly.
+
+- **Add `.env.example` file** — Several useful environment variables (`JVM_MAX_HEAP_SIZE`, `LOTSOFDEVICES`, `SYSTEM_IP`, `UNIFI_STDOUT`, `TZ`, etc.) are only documented in the README. A commented `.env.example` next to `docker-compose.yml` would make them more discoverable for new users.
+
+- **Add SBOM generation** — Producing a Software Bill of Materials (e.g. with `syft`) on each build would give users a full inventory of packages included in the image, useful for compliance and vulnerability tracking.
 
 For other suggestions, please [open an issue](https://github.com/jsoyer/unifi-network-server/issues).
