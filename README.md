@@ -380,8 +380,8 @@ provides more about what we've learned while developing Unifi-in-Docker.
 - **Upgrade base image from Ubuntu 20.04 to 24.04** — Ubuntu 20.04 reached EOL in April 2025 and no longer receives security patches. This is a prerequisite for the MongoDB upgrade below.
 
 - **Upgrade external MongoDB from 3.6 to 7.0** — MongoDB 3.6 is EOL since April 2022. MongoDB 7.0 brings journaling improvements, better crash recovery, and long-term support. Requires:
-  - Validating aarch64 (arm64) support — official MongoDB 7.0 packages for arm64/Ubuntu 24.04 need to be confirmed
-  - Validating armhf (32-bit ARM) support — MongoDB dropped official armhf support after 3.x; a community-maintained alternative may be required (similar to the current `pre_build/armhf/mongodb.sh` approach)
+  - ✅ **aarch64 (arm64/v8) confirmed** — `mongo:7.0` ships an official `linux/arm64/v8` image. Covers Pi 4 and Pi 5 running a 64-bit OS.
+  - ❌ **armhf (32-bit ARM) is a blocker** — MongoDB dropped official armhf support after 3.x. Pi 4 users running a 32-bit OS are affected. Options: find a community build for MongoDB 7.0 on armhf, or officially drop armhf support and document it.
   - Compatibility testing with the UniFi version in use
 
 ### Medium priority
