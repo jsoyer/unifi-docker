@@ -5,12 +5,19 @@ log() {
 }
 
 set_java_home() {
-    JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/jre/bin/java::")
+    local java_bin
+    java_bin=$(readlink -f /usr/bin/java 2>/dev/null)
+    if [ -n "${java_bin}" ]; then
+        JAVA_HOME="${java_bin%/bin/java}"
+    fi
     if [ ! -d "${JAVA_HOME}" ]; then
-        # For some reason readlink failed so lets just make some assumptions instead
-        # We're assuming openjdk 8 since thats what we install in Dockerfile
-        arch=`dpkg --print-architecture 2>/dev/null`
-        JAVA_HOME=/usr/lib/jvm/java-21-openjdk-${arch}
+        local arch
+        arch=$(dpkg --print-architecture 2>/dev/null)
+        # Try Temurin first (installed by docker-build.sh), then fall back to openjdk
+        JAVA_HOME=$(ls -d /usr/lib/jvm/temurin-*-jdk-${arch} 2>/dev/null | sort -V | tail -1)
+        if [ ! -d "${JAVA_HOME}" ]; then
+            JAVA_HOME=/usr/lib/jvm/java-21-openjdk-${arch}
+        fi
     fi
 }
 

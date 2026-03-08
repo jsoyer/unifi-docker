@@ -190,6 +190,11 @@ if [[ "${@}" == "unifi" ]]; then
             mkdir -p "${dir}"
         fi
     done
+    # Ensure backup dir exists and is writable — it may be a host bind mount created as root
+    mkdir -p "${DATADIR}/backup"
+    if [ "${CUID}" == "0" ]; then
+        chown "${UNIFI_UID}:${UNIFI_GID}" "${DATADIR}/backup"
+    fi
     for key in "${!settings[@]}"; do
       confSet "$confFile" "$key" "${settings[$key]}"
     done
