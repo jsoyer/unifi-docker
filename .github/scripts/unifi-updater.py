@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import re
 import sys
 import email.utils
-from datetime import datetime
+from datetime import datetime, timezone
 
 FEED_URL = "https://community.ui.com/rss/releases/UniFi-Network-Application/e6712595-81bb-4829-8e42-9e2630fabcfe"
 DOCKERFILE = "Dockerfile"
