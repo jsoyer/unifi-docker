@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eo pipefail
 
 . /usr/unifi/functions
 
@@ -15,17 +16,17 @@ fi
 exit_handler() {
     log "Exit signal received, shutting down"
     java -jar ${BASEDIR}/lib/ace.jar stop
-    for i in `seq 1 10` ; do
-        [ -z "$(pgrep -f ${BASEDIR}/lib/ace.jar)" ] && break
+    for i in $(seq 1 10) ; do
+        [ -z "$(pgrep -f "${BASEDIR}/lib/ace.jar" || true)" ] && break
         # graceful shutdown
-        [ $i -gt 1 ] && [ -d ${BASEDIR}/run ] && touch ${BASEDIR}/run/server.stop || true
+        [ "$i" -gt 1 ] && [ -d "${BASEDIR}/run" ] && touch "${BASEDIR}/run/server.stop" || true
         # savage shutdown
-        [ $i -gt 7 ] && pkill -f ${BASEDIR}/lib/ace.jar || true
+        [ "$i" -gt 7 ] && pkill -f "${BASEDIR}/lib/ace.jar" || true
         sleep 1
     done
     # shutdown mongod
-    if [ -f ${MONGOLOCK} ]; then
-        mongo localhost:${MONGOPORT} --eval "db.getSiblingDB('admin').shutdownServer()" >/dev/null 2>&1
+    if [ -f "${MONGOLOCK}" ]; then
+        mongo "localhost:${MONGOPORT}" --eval "db.getSiblingDB('admin').shutdownServer()" >/dev/null 2>&1 || true
     fi
     exit 0;
 }
@@ -89,7 +90,7 @@ confSet () {
   file=$1
   key=$2
   value=$3
-  if [ "$newfile" != true ] && grep -q "^${key} *=" "$file"; then
+  if [ "$newfile" != true ] && grep -q "^${key} *=" "$file" 2>/dev/null; then
     ekey=$(echo "$key" | sed -e 's/[]\/$*.^|[]/\\&/g')
     evalue=$(echo "$value" | sed -e 's/[\/&]/\\&/g')
     sed -i "s/^\(${ekey}\s*=\s*\).*$/\1${evalue}/" "$file"
@@ -184,7 +185,7 @@ if [[ "${@}" == "unifi" ]]; then
     log 'Starting unifi controller service.'
     for dir in "${DATADIR}" "${LOGDIR}"; do
         if [ ! -d "${dir}" ]; then
-            if [ "${UNSAFE_IO}" == "true" ]; then
+            if [ "${UNSAFE_IO:-}" == "true" ]; then
                 rm -rf "${dir}"
             fi
             mkdir -p "${dir}"
